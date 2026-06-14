@@ -73,3 +73,5 @@ else
   echo "Compiling cross-compile"
   ./configure --dest-cpu=$CPU --cross-compiling
 fi
+
+make -j$(nproc)
