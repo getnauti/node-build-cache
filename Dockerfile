@@ -16,11 +16,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
     TARGET_ARCH=${TARGET_ARCH} \
     TARGET_LIBC=${TARGET_LIBC}
 
-# COPY scripts/ /tmp/scripts/
-# RUN chmod +x /tmp/scripts/*.sh
-
-# RUN /tmp/scripts/install-deps.sh
-
 RUN apt-get update
 RUN apt-get install -y \
     build-essential \
@@ -33,6 +28,10 @@ RUN apt-get install -y \
     pkg-config \
     ninja-build \
     nasm \
+    llvm \
+    lld \
+    llvm-dev \
+    liblld-dev \
     libtool \
     autoconf \
     automake \
@@ -60,16 +59,6 @@ ENV STRIP=llvm-strip
 
 RUN ./configure
 RUN make -j$(nproc)
-
-# RUN /tmp/scripts/build-node.sh
-
-# ENV NODE_SOURCE_DIR=/usr/src/node \
-#     PATH="/usr/src/node/out/Release:${PATH}"
-
-# LABEL org.opencontainers.image.title="Node.js Build Cache" \
-#       org.opencontainers.image.description="Node.js ${NODE_VERSION} build cache for ${TARGET_OS}-${TARGET_ARCH}-${TARGET_LIBC}" \
-#       nodejs.version=${NODE_VERSION} \
-#       nodejs.target=${TARGET_OS}-${TARGET_ARCH}-${TARGET_LIBC}
 
 WORKDIR /usr/src/node
 CMD ["/bin/bash"]
