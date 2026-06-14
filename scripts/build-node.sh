@@ -14,9 +14,9 @@ echo "Parallel jobs: ${JOBS}"
 # ---------------------------------------------------------------------------
 CONFIGURE_FLAGS=()
 
-# Host compiler (always native gcc)
-export CC_host=gcc
-export CXX_host=g++
+# Host compiler (always native)
+export CC_host=clang
+export CXX_host=clang++
 
 case "${TARGET_OS}" in
   linux)
@@ -25,6 +25,8 @@ case "${TARGET_OS}" in
         case "${TARGET_LIBC}" in
           gnu)
             echo "Config: native Linux x64 (glibc)"
+            export CC=clang
+            export CXX=clang++
             ;;
           musl)
             echo "Config: Linux x64 (musl libc)"
@@ -38,13 +40,13 @@ case "${TARGET_OS}" in
         case "${TARGET_LIBC}" in
           gnu)
             echo "Config: Linux ARM64 (glibc cross-compile)"
-            export CC=aarch64-linux-gnu-gcc
-            export CXX=aarch64-linux-gnu-g++
-            export AR=aarch64-linux-gnu-ar
-            export NM=aarch64-linux-gnu-nm
-            export OBJCOPY=aarch64-linux-gnu-objcopy
-            export OBJDUMP=aarch64-linux-gnu-objdump
-            export STRIP=aarch64-linux-gnu-strip
+            export CC="clang --target=aarch64-linux-gnu"
+            export CXX="clang++ --target=aarch64-linux-gnu"
+            export AR=llvm-ar
+            export NM=llvm-nm
+            export OBJCOPY=llvm-objcopy
+            export OBJDUMP=llvm-objdump
+            export STRIP=llvm-strip
             CONFIGURE_FLAGS+=(--dest-cpu=arm64 --cross-compiling)
             ;;
           musl)
@@ -169,10 +171,10 @@ esac
 # ---------------------------------------------------------------------------
 echo ""
 echo "Compiler information:"
-echo "  CC      = ${CC:-gcc}"
-echo "  CXX     = ${CXX:-g++}"
-echo "  CC_host = ${CC_host:-gcc}"
-echo "  CXX_host= ${CXX_host:-g++}"
+echo "  CC      = ${CC:-clang}"
+echo "  CXX     = ${CXX:-clang++}"
+echo "  CC_host = ${CC_host:-clang}"
+echo "  CXX_host= ${CXX_host:-clang++}"
 if [ -n "${AR:-}" ];  then echo "  AR      = ${AR}"; fi
 if [ -n "${NM:-}" ];  then echo "  NM      = ${NM}"; fi
 echo ""
