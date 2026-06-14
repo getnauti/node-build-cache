@@ -1,21 +1,15 @@
-ARG NODE_VERSION=v24.9.0
-ARG TARGET_OS=linux
-ARG TARGET_ARCH=x64
-ARG TARGET_LIBC=gnu
-
 FROM debian:trixie
 
-ARG NODE_VERSION
-ARG TARGET_OS
-ARG TARGET_ARCH
-ARG TARGET_LIBC
+COPY ./scripts /tmp/scripts
+
+ARG NODE_VERSION=v24.9.0
+ARG TARGET=linux-x64
 
 ENV DEBIAN_FRONTEND=noninteractive \
     NODE_VERSION=${NODE_VERSION} \
-    TARGET_OS=${TARGET_OS} \
-    TARGET_ARCH=${TARGET_ARCH} \
-    TARGET_LIBC=${TARGET_LIBC}
+    TARGET=${TARGET}
 
+RUN chmod +x /tmp/scripts/*.sh
 RUN apt-get update
 RUN apt-get install -y \
     build-essential \
@@ -49,16 +43,15 @@ RUN git clone --depth 1 --branch ${NODE_VERSION} https://github.com/nodejs/node.
 
 WORKDIR /usr/src/node
 
-ENV CC=clang
-ENV CXX=clang++
 ENV AR=llvm-ar
 ENV NM=llvm-nm
 ENV OBJCOPY=llvm-objcopy
 ENV OBJDUMP=llvm-objdump
 ENV STRIP=llvm-strip
+ENV RANLIB=llvm-ranlib
+ENV LD=ld.lld
 
-RUN ./configure
-RUN make -j$(nproc)
+RUN /tmp/scripts/build.sh
 
 WORKDIR /usr/src/node
 CMD ["/bin/bash"]

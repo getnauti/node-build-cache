@@ -18,14 +18,17 @@ jobs:
     strategy:
       matrix:
         target:
-          - { os: linux,   arch: x64, libc: gnu  }
-          # - { os: linux,   arch: arm64, libc: gnu  }
-          # - { os: linux,   arch: x64, libc: musl }
-          # - { os: linux,   arch: arm64, libc: musl }
-          # - { os: windows, arch: x64, libc: gnu  }
-          # - { os: windows, arch: arm64, libc: gnu  }
-          # - { os: darwin,  arch: x64, libc: gnu  }
-          # - { os: darwin,  arch: arm64, libc: gnu  }
+          - { target: alpine-arm64 }
+          - { target: alpine-x64 }
+          - { target: linux-arm64 }
+          - { target: linux-x64 }
+          - { target: linuxstatic-arm64 }
+          - { target: linuxstatic-armv7 }
+          - { target: linuxstatic-x64 }
+          # - { target: macos-arm64 }
+          # - { target: macos-x64 }
+          - { target: win-arm64 }
+          - { target: win-x64 }
 
     runs-on: ubuntu-latest
 
@@ -56,10 +59,10 @@ jobs:
             --build-arg TARGET_ARCH=${{ matrix.target.arch }} \
             --build-arg TARGET_LIBC=${{ matrix.target.libc }} \
             --build-arg NODE_VERSION=${{ startsWith(github.ref_name, 'v') && github.ref_name || steps.info.outputs.latest_version }} \
-            -t ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/node-build-cache:${{ github.ref_name }}-${{ matrix.target.os }}-${{ matrix.target.arch }}-${{ matrix.target.libc }} \
+            -t ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/node-build-cache:${{ github.ref_name }}-${{ matrix.target }} \
             -f Dockerfile .
 
       - name: Push to registry
         if: startsWith(github.ref_name, 'v')
         run: |
-          docker push ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/node-build-cache:${{ github.ref_name }}-${{ matrix.target.os }}-${{ matrix.target.arch }}-${{ matrix.target.libc }}
+          docker push ${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAMESPACE }}/node-build-cache:${{ github.ref_name }}-${{ matrix.target }}
