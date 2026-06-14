@@ -51,7 +51,7 @@ ENV STRIP=llvm-strip
 ENV RANLIB=llvm-ranlib
 ENV LD=ld.lld
 
-RUN /tmp/scripts/build.sh
+RUN /tmp/scripts/build.sh $TARGET
 
 WORKDIR /usr/src/node
 CMD ["/bin/bash"]
