@@ -11,14 +11,8 @@ export CXX="clang++"
 
 linux-arm64)
 CPU=arm64
-SYSROOT=/opt/sysroots/arm64
-RUN dpkg --add-architecture arm64
-RUN apt-get update && apt-get install -y \
-    libc6-dev-arm64-cross \
-    gcc-aarch64-linux-gnu \
-    g++-aarch64-linux-gnu
-export CC="clang --sysroot=$SYSROOT --target=aarch64-linux-gnu --gcc-toolchain=/usr/aarch64-linux-gnu"
-export CXX="clang++ --sysroot=$SYSROOT --target=aarch64-linux-gnu --gcc-toolchain=/usr/aarch64-linux-gnu"
+export CC="clang --target=aarch64-linux-gnu --gcc-toolchain=/usr/aarch64-linux-gnu"
+export CXX="clang++ --target=aarch64-linux-gnu --gcc-toolchain=/usr/aarch64-linux-gnu"
 ;;
 
 linuxstatic-x64|alpine-x64)
