@@ -12,22 +12,11 @@ export CXX="clang++"
 linux-arm64)
 CPU=arm64
 SYSROOT=/opt/sysroots/arm64
-debootstrap \
-  --arch=arm64 \
-  --foreign \
-  trixie \
-  $SYSROOT \
-  http://deb.debian.org/debian
-cp /usr/bin/qemu-aarch64-static $SYSROOT/usr/bin/
-chroot $SYSROOT /debootstrap/debootstrap --second-stage
-chroot $SYSROOT apt-get update
-chroot $SYSROOT apt-get install -y \
-  build-essential \
-  pkg-config \
-  libc6-dev \
-  linux-libc-dev \
-  zlib1g-dev \
-  libssl-dev
+RUN dpkg --add-architecture arm64
+RUN apt-get update && apt-get install -y \
+    libc6-dev-arm64-cross \
+    gcc-aarch64-linux-gnu \
+    g++-aarch64-linux-gnu
 export CC="clang --sysroot=$SYSROOT --target=aarch64-linux-gnu --gcc-toolchain=/usr/aarch64-linux-gnu"
 export CXX="clang++ --sysroot=$SYSROOT --target=aarch64-linux-gnu --gcc-toolchain=/usr/aarch64-linux-gnu"
 ;;
