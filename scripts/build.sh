@@ -19,8 +19,17 @@ debootstrap \
   $SYSROOT \
   http://deb.debian.org/debian
 cp /usr/bin/qemu-aarch64-static $SYSROOT/usr/bin/
-export CC="clang --sysroot=$SYSROOT --target=aarch64-linux-gnu"
-export CXX="clang++ --sysroot=$SYSROOT --target=aarch64-linux-gnu"
+chroot $SYSROOT /debootstrap/debootstrap --second-stage
+chroot $SYSROOT apt-get update
+chroot $SYSROOT apt-get install -y \
+  build-essential \
+  pkg-config \
+  libc6-dev \
+  linux-libc-dev \
+  zlib1g-dev \
+  libssl-dev
+export CC="clang --sysroot=$SYSROOT --target=aarch64-linux-gnu --gcc-toolchain=/usr/aarch64-linux-gnu"
+export CXX="clang++ --sysroot=$SYSROOT --target=aarch64-linux-gnu --gcc-toolchain=/usr/aarch64-linux-gnu"
 ;;
 
 linuxstatic-x64|alpine-x64)
