@@ -27,8 +27,8 @@ jobs:
           # - { target: linuxstatic-x64 }
           # - { target: macos-arm64 }
           # - { target: macos-x64 }
-          - { name: win-arm64 }
-          - { name: win-x64 }
+          # - { name: win-arm64 }
+          # - { name: win-x64 }
 
     runs-on: ubuntu-latest
 

@@ -35,7 +35,9 @@ RUN apt-get install -y \
     libnghttp2-dev \
     libbrotli-dev \
     libc-ares-dev \
-    libicu-dev
+    libicu-dev \
+    debootstrap \
+    qemu-user-static
 
 WORKDIR /usr/src
 

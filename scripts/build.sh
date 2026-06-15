@@ -3,14 +3,24 @@ TARGET=$1
 case "$TARGET" in
 
 linux-x64)
-TRIPLE=x86_64-linux-gnu
 CPU=x64
 NOCROSS=1
+export CC="clang"
+export CXX="clang++"
 ;;
 
 linux-arm64)
-TRIPLE=aarch64-linux-gnu
 CPU=arm64
+SYSROOT=/opt/sysroots/arm64
+debootstrap \
+  --arch=arm64 \
+  --foreign \
+  trixie \
+  $SYSROOT \
+  http://deb.debian.org/debian
+cp /usr/bin/qemu-aarch64-static $SYSROOT/usr/bin/
+export CC="clang --sysroot=$SYSROOT --target=aarch64-linux-gnu"
+export CXX="clang++ --sysroot=$SYSROOT --target=aarch64-linux-gnu"
 ;;
 
 linuxstatic-x64|alpine-x64)
@@ -51,19 +61,14 @@ CPU=arm64
 
 esac
 
-export CC="clang --target=$TRIPLE"
-export CXX="clang++ --target=$TRIPLE"
 export CC_host=clang
 export CXX_host=clang++
 
-echo "TRIPLE=\"$TRIPLE\"" >> /etc/environment
 echo "CPU=\"$CPU\"" >> /etc/environment
 echo "NOCROSS=\"$NOCROSS\"" >> /etc/environment
 
 echo "=============================="
 echo "Config: $TARGET (cross-compile: ${NOCROSS:-0})"
-echo "TRIPLE: $TRIPLE"
-echo "CPU: $CPU"
 echo "CC: $CC"
 echo "CXX: $CXX"
 echo "=============================="
