@@ -12,8 +12,8 @@ export CXX="clang++"
 linux-arm64)
 CPU=arm64
 SYSROOT=/usr/aarch64-linux-gnu
-export CC="clang --target=aarch64-linux-gnu --sysroot=$SYSROOT"
-export CXX="clang++ --target=aarch64-linux-gnu --sysroot=$SYSROOT"
+export CC="clang --target=aarch64-linux-gnu --sysroot=$SYSROOT --gcc-toolchain=/usr"
+export CXX="clang++ --target=aarch64-linux-gnu --sysroot=$SYSROOT --gcc-toolchain=/usr"
 export CFLAGS="--sysroot=$SYSROOT"
 export CXXFLAGS="--sysroot=$SYSROOT"
 export LDFLAGS="--sysroot=$SYSROOT"
