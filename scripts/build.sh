@@ -3,6 +3,13 @@ TARGET=$1
 case "$TARGET" in
 
 linux-x64)
+export AR=llvm-ar
+export NM=llvm-nm
+export OBJCOPY=llvm-objcopy
+export OBJDUMP=llvm-objdump
+export STRIP=llvm-strip
+export RANLIB=llvm-ranlib
+export LD=ld.lld
 CPU=x64
 NOCROSS=1
 export CC="clang"
@@ -10,13 +17,17 @@ export CXX="clang++"
 ;;
 
 linux-arm64)
+export CC=aarch64-linux-gnu-gcc
+export CXX=aarch64-linux-gnu-g++
+AR=ar
+LD=ld
 CPU=arm64
-SYSROOT=/usr/aarch64-linux-gnu
-export CC="clang --target=aarch64-linux-gnu --sysroot=$SYSROOT --gcc-toolchain=/usr"
-export CXX="clang++ --target=aarch64-linux-gnu --sysroot=$SYSROOT --gcc-toolchain=/usr"
-export CFLAGS="--sysroot=$SYSROOT"
-export CXXFLAGS="--sysroot=$SYSROOT"
-export LDFLAGS="--sysroot=$SYSROOT"
+# SYSROOT=/usr/aarch64-linux-gnu
+# export CC="clang --target=aarch64-linux-gnu --sysroot=$SYSROOT --gcc-toolchain=/usr"
+# export CXX="clang++ --target=aarch64-linux-gnu --sysroot=$SYSROOT --gcc-toolchain=/usr"
+# export CFLAGS="--sysroot=$SYSROOT"
+# export CXXFLAGS="--sysroot=$SYSROOT"
+# export LDFLAGS="--sysroot=$SYSROOT"
 ;;
 
 linuxstatic-x64|alpine-x64)

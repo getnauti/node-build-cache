@@ -40,21 +40,14 @@ RUN apt-get install -y \
     qemu-user-static \
     libc6-dev-arm64-cross \
     gcc-aarch64-linux-gnu \
-    g++-aarch64-linux-gnu
+    g++-aarch64-linux-gnu \
+    binutils-aarch64-linux-gnu
 
 WORKDIR /usr/src
 
 RUN git clone --depth 1 --branch ${NODE_VERSION} https://github.com/nodejs/node.git node
 
 WORKDIR /usr/src/node
-
-ENV AR=llvm-ar
-ENV NM=llvm-nm
-ENV OBJCOPY=llvm-objcopy
-ENV OBJDUMP=llvm-objdump
-ENV STRIP=llvm-strip
-ENV RANLIB=llvm-ranlib
-ENV LD=ld.lld
 
 RUN /tmp/scripts/build.sh $TARGET
 
