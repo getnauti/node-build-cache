@@ -19,8 +19,8 @@ export CXX="clang++"
 linux-arm64)
 export CC=aarch64-linux-gnu-gcc
 export CXX=aarch64-linux-gnu-g++
-AR=ar
-LD=ld
+export AR=ar
+export LD=ld
 CPU=arm64
 # SYSROOT=/usr/aarch64-linux-gnu
 # export CC="clang --target=aarch64-linux-gnu --sysroot=$SYSROOT --gcc-toolchain=/usr"
