@@ -40,8 +40,7 @@ RUN apt-get install -y \
     qemu-user-static \
     libc6-dev-arm64-cross \
     gcc-aarch64-linux-gnu \
-    g++-aarch64-linux-gnu \
-    libstdc++-11-dev-arm64-cross
+    g++-aarch64-linux-gnu
 
 WORKDIR /usr/src
 
