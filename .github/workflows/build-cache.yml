@@ -24,7 +24,6 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-
           sudo apt-get install -y \
             build-essential \
             python3 \
@@ -39,8 +38,8 @@ jobs:
           curl -L -o node.tar.xz https://nodejs.org/dist/v${{ matrix.node_version }}/node-v${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.xz
           tar -xJf node.tar.xz
           ls -al
-          mv node-v${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }} node
-          rm -f node.tar.xz
+          mv ./node-v${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }} /node
+          rm -f ./node.tar.xz
           chmod +x ./node/configure
 
       - name: Setup ccache
@@ -71,10 +70,8 @@ jobs:
       - name: Package build cache
         run: |
           mkdir artifact
-
           cp -r node artifact/node
           cp -r .ccache artifact/.ccache
-
           rm -rf artifact/node/.git
 
       - name: Create archive
