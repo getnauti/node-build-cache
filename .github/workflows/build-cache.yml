@@ -38,7 +38,7 @@ jobs:
           curl -L -o node.tar.xz https://nodejs.org/dist/v${{ matrix.node_version }}/node-v${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.xz
           tar -xJf node.tar.xz
           ls -al
-          mv ./node-v${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }} /node
+          mv ./node-v${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }} ./node
           rm -f ./node.tar.xz
           ls -al
           chmod +x ./node/configure
