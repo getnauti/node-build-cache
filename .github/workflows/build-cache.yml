@@ -37,7 +37,8 @@ jobs:
         if: matrix.target.os == 'linux'
         run: |
           curl -L -o node.tar.xz https://nodejs.org/dist/v${{ matrix.node_version }}/node-v${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.xz
-          tar --strip-components 1 -xJf node.tar.xz
+          tar -xJf node.tar.xz
+          mv node-v${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }} node
           rm -f node.tar.xz
 
       - name: Setup ccache
