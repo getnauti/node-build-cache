@@ -40,6 +40,7 @@ jobs:
           ls -al
           mv ./node-v${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }} /node
           rm -f ./node.tar.xz
+          ls -al
           chmod +x ./node/configure
 
       - name: Setup ccache
