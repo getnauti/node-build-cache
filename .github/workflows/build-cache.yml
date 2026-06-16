@@ -1,0 +1,90 @@
+name: Build Node.js Cache
+
+on:
+  push:
+    branches:
+      - '*'
+      - '**'
+      - '*/*'
+
+strategy:
+  matrix:
+    node_version: ["24.16.0"]
+    target:
+      - { os: "linux", arch: "arm64", runner: "ubuntu-24.04-arm" }
+
+jobs:
+  build:
+    runs-on: ${{ matrix.target.runner }}
+
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+
+          sudo apt-get install -y \
+            build-essential \
+            python3 \
+            git \
+            curl \
+            ccache \
+            pkg-config
+
+      - name: Checkout Node.js (Linux)
+        if: matrix.target.os == 'linux'
+        run: |
+          curl -L -o node.tar.xz https://nodejs.org/dist/v${{ matrix.node_version }}/node-v${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.xz
+          tar --strip-components 1 -xJf node.tar.xz
+          rm -f node.tar.xz
+
+      - name: Setup ccache
+        run: |
+          mkdir -p "$CCACHE_DIR"
+          echo "/usr/lib/ccache" >> $GITHUB_PATH
+          ccache --set-config=max_size=10G
+          ccache --zero-stats
+
+      - name: Configure
+        working-directory: node
+        run: |
+          ./configure \
+            --enable-lto \
+            --without-inspector \
+            --without-npm \
+            --without-intl
+
+      - name: Build
+        working-directory: node
+        run: |
+          make -j$(nproc)
+
+      - name: Show ccache stats
+        run: |
+          ccache --show-stats
+
+      - name: Package build cache
+        run: |
+          mkdir artifact
+
+          cp -r node artifact/node
+          cp -r .ccache artifact/.ccache
+
+          rm -rf artifact/node/.git
+
+      - name: Create archive
+        run: |
+          tar \
+            --use-compress-program="zstd -19 -T0" \
+            -cf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.zst \
+            artifact
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
+          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.zst
+          compression-level: 0
+          retention-days: 30
