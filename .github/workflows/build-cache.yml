@@ -40,6 +40,7 @@ jobs:
           tar -xJf node.tar.xz
           mv node-v${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }} node
           rm -f node.tar.xz
+          chmod +x ./node/configure
 
       - name: Setup ccache
         run: |
