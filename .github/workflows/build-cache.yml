@@ -7,14 +7,14 @@ on:
       - '**'
       - '*/*'
 
-strategy:
-  matrix:
-    node_version: ["24.16.0"]
-    target:
-      - { os: "linux", arch: "arm64", runner: "ubuntu-24.04-arm" }
-
 jobs:
   build:
+    strategy:
+      matrix:
+        node_version: ["24.16.0"]
+        target:
+          - { os: "linux", arch: "arm64", runner: "ubuntu-24.04-arm" }
+
     runs-on: ${{ matrix.target.runner }}
 
     env:
