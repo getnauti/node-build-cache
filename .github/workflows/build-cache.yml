@@ -158,7 +158,7 @@ jobs:
       - name: Install NASM
         shell: cmd
         run: |
-          choco install nasm sccache -y
+          choco install nasm sccache llvm -y
 
       - name: Setup ccache launcher
         shell: pwsh
@@ -187,7 +187,7 @@ jobs:
         env:
           "config_flags": "--without-inspector --without-npm --use-ccache-win --with-ltcg"
         run: |
-          cmd /c "vcbuild.bat ${{ matrix.target.arch }} full-icu ccache .\ccache-bin"
+          cmd /c "vcbuild.bat ${{ matrix.target.arch }} full-icu ccache %GITHUB_WORKSPACE%\ccache-bin"
 
       - name: Package build cache
         shell: bash
