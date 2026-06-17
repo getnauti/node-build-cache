@@ -8,13 +8,16 @@ on:
       - '*/*'
 
 jobs:
-  build-linux-standard-and-static-libc-arm64:
+  build-linux:
     strategy:
       matrix:
         node_version: ["24.16.0"]
         target:
+          - { os: "linux", arch: "x64", runner: "ubuntu-24.04" }
           - { os: "linux", arch: "arm64", runner: "ubuntu-24.04-arm" }
+          - { os: "alpine", arch: "x64", runner: "ubuntu-24.04" }
           - { os: "alpine", arch: "arm64", runner: "ubuntu-24.04-arm" }
+          - { os: "linuxstatic", arch: "x64", runner: "ubuntu-24.04" }
           - { os: "linuxstatic", arch: "arm64", runner: "ubuntu-24.04-arm" }
 
     runs-on: ${{ matrix.target.runner }}
@@ -46,48 +49,40 @@ jobs:
           run_id: ${{ github.run_id }}
           ccache_dir: ${{ env.CCACHE_DIR }}
 
-  build-linux-static-libc-x64:
-    strategy:
-      matrix:
-        node_version: ["24.16.0"]
-        target:
-          - { os: "alpine", arch: "x64", runner: "ubuntu-24.04" }
-          - { os: "linuxstatic", arch: "x64", runner: "ubuntu-24.04" }
+  # build-windows:
+  #   strategy:
+  #     matrix:
+  #       node_version: ["24.16.0"]
+  #       target:
+  #         - { os: "windows", arch: "x64", runner: "windows-latest" }
+  #         - { os: "windows", arch: "arm64", runner: "windows-11-arm" }
 
-    runs-on: ${{ matrix.target.runner }}
+  #   runs-on: ${{ matrix.target.runner }}
 
-    container:
-      image: alpine:3.22
+  #   env:
+  #     CCACHE_DIR: ${{ github.workspace }}/.ccache
 
-    env:
-      CCACHE_DIR: ${{ github.workspace }}/.ccache
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-    steps:
-      - uses: actions/checkout@v4
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v6
+  #       with:
+  #         python-version: '3.12'
+  #         check-latest: true
 
-      - name: Install dependencies
-        run: |
-          apk update
-          apk add --no-cache \
-            brotli \
-            build-base \
-            python3 \
-            linux-headers \
-            bash \
-            pkgconf \
-            curl \
-            ccache
+  #     - run: choco install nasm
 
-      - uses: ./.github/actions/build-node-cache
-        with:
-          node_version: ${{ matrix.node_version }}
-          os: ${{ matrix.target.os }}
-          arch: ${{ matrix.target.arch }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          run_id: ${{ github.run_id }}
-          ccache_dir: ${{ env.CCACHE_DIR }}
+  #     - uses: ./.github/actions/build-node-cache
+  #       with:
+  #         node_version: ${{ matrix.node_version }}
+  #         os: ${{ matrix.target.os }}
+  #         arch: ${{ matrix.target.arch }}
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         run_id: ${{ github.run_id }}
+  #         ccache_dir: ${{ env.CCACHE_DIR }}
 
-  release:
+  aggregation-artifacts:
     needs:
       - build-linux-standard-and-static-libc-arm64
       - build-linux-static-libc-x64
