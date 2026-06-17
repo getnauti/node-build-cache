@@ -36,11 +36,12 @@ runs:
 
     - name: Setup MUSL
       shell: bash
-      if: ${{ inputs.os == 'alpine' || inputs.os == 'linuxstatic' }}
+      if: ${{ (inputs.os == 'alpine' || inputs.os == 'linuxstatic') && inputs.arch == 'arm64' }}
       run: |
-        curl -LO https://musl.cc/aarch64-linux-musl-cross.tgz
-        tar -xzf aarch64-linux-musl-cross.tgz -C /usr/local --strip-components=1
-        rm aarch64-linux-musl-cross.tgz
+        curl -LO https://github.com/lovell/aarch64-linux-musl-crosstools/archive/refs/heads/main.zip
+        unzip main.zip
+        mv aarch64-linux-musl-crosstools-main/aarch64-linux-musl-cross /usr/local
+        rm -rf aarch64-linux-musl-crosstools-main main.zip
 
     - name: Configure
       shell: bash
