@@ -7,6 +7,9 @@ on:
       - '**'
       - '*/*'
 
+permissions:
+  contents: write
+
 jobs:
   build-linux:
     strategy:
@@ -130,18 +133,23 @@ jobs:
         run: |
           tar -czf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz artifact
 
-      - name: Upload Cache
-        uses: actions/cache@v4
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: github.ref_name == 'master'
         with:
-          key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
-          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
+          files: |
+            node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: build-${{ github.run_id }}
+          name: Build ${{ github.run_id }}
+          overwrite_files: true
 
   build-windows:
     strategy:
       matrix:
         node_version: ["24.16.0"]
         target:
-          - { os: "windows", arch: "x64", runner: "windows-latest" }
+          - { os: "windows", arch: "x64", runner: "windows-2022" }
           - { os: "windows", arch: "arm64", runner: "windows-11-arm" }
 
     runs-on: ${{ matrix.target.runner }}
@@ -209,11 +217,21 @@ jobs:
         run: |
           tar -czf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz artifact
 
-      - name: Upload Cache
-        uses: actions/cache@v4
+      # - name: Upload Cache
+      #   uses: actions/cache@v4
+      #   with:
+      #     key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
+      #     path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: github.ref_name == 'master'
         with:
-          key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
-          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
+          files: |
+            node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: build-${{ github.run_id }}
+          name: Build ${{ github.run_id }}
+          overwrite_files: true
 
   build-darwin:
     strategy:
@@ -303,11 +321,22 @@ jobs:
         run: |
           tar -czf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz artifact
 
-      - name: Upload Cache
-        uses: actions/cache@v4
+      # - name: Upload Cache
+      #   uses: actions/cache@v4
+      #   with:
+      #     key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
+      #     path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: github.ref_name == 'master'
         with:
-          key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
-          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
+          files: |
+            node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: build-${{ github.run_id }}
+          name: Build ${{ github.run_id }}
+          overwrite_files: true
 
   # aggregation-artifacts:
   #   needs:
