@@ -158,7 +158,9 @@ jobs:
 
       - name: Install NASM
         shell: cmd
-        run: choco install nasm brotli -y
+        run: |
+          choco install nasm -y
+          winget install Google.Brotli --silent --accept-package-agreements --accept-source-agreements
 
       - name: Build
         env:
@@ -216,7 +218,7 @@ jobs:
       # (GNU make v4 fixes `make -j N`: https://github.com/nodejs/node/issues/53176#issuecomment-2134740862)
       - name: Install build tools
         if: matrix.target.arch == 'arm64'
-        run: brew install python-setuptools ccache mak
+        run: brew install python-setuptools ccache make
 
       - name: Put build tools first in PATH
         run: |
