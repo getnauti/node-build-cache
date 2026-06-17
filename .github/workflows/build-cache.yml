@@ -21,6 +21,8 @@ jobs:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -58,6 +60,8 @@ jobs:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Install dependencies
         run: |
           apk update
