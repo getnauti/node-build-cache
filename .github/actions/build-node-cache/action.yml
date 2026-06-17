@@ -1,0 +1,81 @@
+name: Build Node Cache
+
+inputs:
+  node-version:
+    required: true
+  os:
+    required: true
+  arch:
+    required: true
+  token:
+    required: true
+  run_id:
+    required: true
+  ccache_dir:
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Checkout Node.js Source Code
+      shell: bash
+      run: |
+        curl -L -o node.tar.gz \
+          https://github.com/nodejs/node/archive/refs/tags/v${{ inputs.node-version }}.tar.gz
+        tar -zxf node.tar.gz
+        mv node-${{ inputs.node-version }} node
+        rm node.tar.gz
+
+    - name: Setup ccache
+      shell: bash
+      run: |
+        mkdir -p "${{ inputs.ccache_dir }}"
+        ccache --set-config=max_size=10G
+        ccache --zero-stats
+
+    - name: Configure
+      shell: bash
+      env:
+        OS: ${{ inputs.os }}
+      working-directory: node
+      run: |
+        BUILD_ARGS="--enable-lto --without-inspector --without-npm --without-intl"
+        case "$OS" in
+          linuxstatic)
+            BUILD_ARGS="$BUILD_ARGS --fully-static"
+            ;;
+          alpine)
+            BUILD_ARGS="$BUILD_ARGS --partly-static"
+            ;;
+        esac
+        ./configure $BUILD_ARGS
+
+    - name: Build
+      shell: bash
+      working-directory: node
+      run: |
+        make -j$(nproc)
+
+    - name: Show ccache stats
+      shell: bash
+      run: |
+        ccache --show-stats
+
+    - name: Package build cache
+      shell: bash
+      run: |
+        mkdir artifact
+        cp -r node artifact/node
+        cp -r .ccache artifact/.ccache
+
+    - name: Create archive
+      shell: bash
+      run: |
+        tar -cf - artifact | brotli > node-${{ inputs.node_version }}-${{ inputs.os }}-${{ inputs.arch }}.tar.br
+
+    - name: Upload Cache
+      uses: actions/cache@v4
+      with:
+        key: ${{ github.run_id }}-${{ inputs.node_version }}-${{ inputs.os }}-${{ inputs.arch }}
+        path: node-${{ inputs.node_version }}-${{ inputs.os }}-${{ inputs.arch }}.tar.br

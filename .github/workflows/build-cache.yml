@@ -8,7 +8,7 @@ on:
       - '*/*'
 
 jobs:
-  build:
+  build-linux-standard:
     strategy:
       matrix:
         node_version: ["24.16.0"]
@@ -27,64 +27,87 @@ jobs:
           sudo apt-get install -y \
             build-essential \
             python3 \
-            git \
             curl \
             ccache \
-            pkg-config
+            pkg-config \
+            brotli
 
-      - name: Checkout Node.js Source Code
-        run: |
-          curl -L -o node.tar.gz https://github.com/nodejs/node/archive/refs/tags/v${{ matrix.node_version }}.tar.gz
-          tar -zxf node.tar.gz
-          ls -al
-          mv ./node-${{ matrix.node_version }} ./node
-          rm -f ./node.tar.gz
-          ls -al ./node
-          chmod +x ./node/configure
-
-      - name: Setup ccache
-        run: |
-          mkdir -p "$CCACHE_DIR"
-          echo "/usr/lib/ccache" >> $GITHUB_PATH
-          ccache --set-config=max_size=10G
-          ccache --zero-stats
-
-      - name: Configure
-        working-directory: node
-        run: |
-          ./configure \
-            --enable-lto \
-            --without-inspector \
-            --without-npm \
-            --without-intl
-
-      - name: Build
-        working-directory: node
-        run: |
-          make -j$(nproc)
-
-      - name: Show ccache stats
-        run: |
-          ccache --show-stats
-
-      - name: Package build cache
-        run: |
-          mkdir artifact
-          cp -r node artifact/node
-          cp -r .ccache artifact/.ccache
-          rm -rf artifact/node/.git
-
-      - name: Create archive
-        run: |
-          tar \
-            --use-compress-program="zstd -19 -T0" \
-            -cf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.zst \
-            artifact
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - uses: ./.github/actions/build-node-cache
         with:
-          name: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
-          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.zst
-          compression-level: 0
-          retention-days: 30
+          node_version: ${{ matrix.node_version }}
+          os: ${{ matrix.target.os }}
+          arch: ${{ matrix.target.arch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          run_id: ${{ github.run_id }}
+          ccache_dir: ${{ env.CCACHE_DIR }}
+
+  build-linux-static-libc:
+    strategy:
+      matrix:
+        node_version: ["24.16.0"]
+        target:
+          - { os: "alpine", arch: "arm64", runner: "ubuntu-24.04-arm" }
+          - { os: "linuxstatic", arch: "arm64", runner: "ubuntu-24.04-arm" }
+
+    runs-on: ${{ matrix.target.runner }}
+
+    container:
+      image: alpine:3.22
+
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+
+    steps:
+      - name: Install dependencies
+        run: |
+          apk update
+          apk add --no-cache \
+            brotli \
+            build-base \
+            python3 \
+            linux-headers \
+            bash \
+            pkgconf \
+            curl \
+            ccache
+
+      - uses: ./.github/actions/build-node-cache
+        with:
+          node_version: ${{ matrix.node_version }}
+          os: ${{ matrix.target.os }}
+          arch: ${{ matrix.target.arch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          run_id: ${{ github.run_id }}
+          ccache_dir: ${{ env.CCACHE_DIR }}
+
+  release:
+    needs:
+      - build-linux-standard
+      - build-linux-static-libc
+
+    strategy:
+      matrix:
+        node_version: ["24.16.0"]
+        target:
+          - { os: "linux", arch: "arm64", runner: "ubuntu-24.04-arm" }
+          - { os: "alpine", arch: "arm64", runner: "ubuntu-24.04-arm" }
+          - { os: "linuxstatic", arch: "arm64", runner: "ubuntu-24.04-arm" }
+
+    runs-on: ubuntu
+
+    steps:
+      - name: Restore Cache
+        uses: actions/cache@v4
+        with:
+          key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
+          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.br
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: github.ref_name === 'master'
+        with:
+          files: |
+            ./*.tar.br
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: build-${{ github.run_id }}
+          name: Build ${{ github.run_id }}
