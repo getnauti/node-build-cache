@@ -35,7 +35,6 @@ jobs:
             curl \
             ccache \
             pkg-config \
-            brotli \
             musl-tools
 
       - name: Checkout Node.js Source Code
@@ -128,13 +127,13 @@ jobs:
 
       - name: Create archive
         run: |
-          tar -cf - artifact | brotli > node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.br
+          tar -czf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz artifact
 
       - name: Upload Cache
         uses: actions/cache@v4
         with:
           key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
-          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.br
+          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
 
   build-windows:
     strategy:
@@ -160,9 +159,9 @@ jobs:
         shell: cmd
         run: |
           choco install nasm -y
-          winget install Google.Brotli --silent --accept-package-agreements --accept-source-agreements
 
       - name: Build
+        working-directory: node
         env:
           "config_flags": "--enable-lto --without-inspector --without-npm --use-ccache-win --with-ltcg "
         run: |
@@ -177,14 +176,13 @@ jobs:
 
       - name: Create archive
         run: |
-          tar -cf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar artifact
-          brotli node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar
+          tar -czf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz artifact
 
       - name: Upload Cache
         uses: actions/cache@v4
         with:
           key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
-          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.br
+          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
 
   build-darwin:
     strategy:
@@ -235,6 +233,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Configure
+        working-directory: node
         run: |
           export CC=clang
           export CXX=clang++
@@ -243,6 +242,11 @@ jobs:
           export AR=ar
           export RANLIB=ranlib
           ./configure --enable-lto --without-inspector --without-npm
+
+      - name: Build
+        working-directory: node
+        run: |
+          make -j$(nproc)
 
       - name: Show ccache stats
         if: always()
@@ -257,14 +261,13 @@ jobs:
 
       - name: Create archive
         run: |
-          tar -cf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar artifact
-          brotli node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar
+          tar -czf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz artifact
 
       - name: Upload Cache
         uses: actions/cache@v4
         with:
           key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
-          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.br
+          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
 
   # aggregation-artifacts:
   #   needs:
@@ -287,14 +290,14 @@ jobs:
   #       uses: actions/cache@v4
   #       with:
   #         key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
-  #         path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.br
+  #         path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
 
   #     - name: Release
   #       uses: softprops/action-gh-release@v1
   #       if: github.ref_name == 'master'
   #       with:
   #         files: |
-  #           ./*.tar.br
+  #           ./*.tar.gz
   #         token: ${{ secrets.GITHUB_TOKEN }}
   #         tag_name: build-${{ github.run_id }}
   #         name: Build ${{ github.run_id }}
