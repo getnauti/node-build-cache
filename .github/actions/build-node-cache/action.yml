@@ -56,6 +56,9 @@ runs:
           linuxstatic)
             BUILD_ARGS="$BUILD_ARGS --fully-static"
             ;;
+          alpine)
+            BUILD_ARGS="$BUILD_ARGS --partly-static"
+            ;;
         esac
 
         if [[ ("$OS" == "alpine" || "$OS" == "linuxstatic")  && "$ARCH" == "arm64" ]]; then
