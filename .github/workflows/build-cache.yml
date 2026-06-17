@@ -104,7 +104,7 @@ jobs:
 
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: github.ref_name === 'master'
+        if: github.ref_name == 'master'
         with:
           files: |
             ./*.tar.br
