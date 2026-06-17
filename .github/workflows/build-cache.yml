@@ -160,6 +160,15 @@ jobs:
         run: |
           choco install nasm -y
 
+      - name: Checkout Node.js Source Code
+        shell: bash
+        run: |
+          curl -L -o node.tar.gz \
+            https://github.com/nodejs/node/archive/refs/tags/v${{ matrix.node_version }}.tar.gz
+          tar -zxf node.tar.gz
+          mv node-${{ matrix.node_version }} node
+          rm node.tar.gz
+
       - name: Build
         working-directory: node
         env:
@@ -211,6 +220,14 @@ jobs:
         run: |
           pip install setuptools
           brew install ccache make
+
+      - name: Checkout Node.js Source Code
+        run: |
+          curl -L -o node.tar.gz \
+            https://github.com/nodejs/node/archive/refs/tags/v${{ matrix.node_version }}.tar.gz
+          tar -zxf node.tar.gz
+          mv node-${{ matrix.node_version }} node
+          rm node.tar.gz
 
       # add missing distutils package to python 3.12, plus ccache and GNU make v4
       # (GNU make v4 fixes `make -j N`: https://github.com/nodejs/node/issues/53176#issuecomment-2134740862)
