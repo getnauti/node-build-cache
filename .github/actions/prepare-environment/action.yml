@@ -32,7 +32,8 @@ runs:
           curl \
           ccache \
           pkg-config \
-          musl-tools
+          musl-tools \
+          llvm
 
     - name: Setup XCode (Darwin)
       if: ${{ inputs.os == 'darwin' }}
@@ -66,23 +67,9 @@ runs:
         df -h
         echo "::endgroup::"
 
-    - name: Setup MUSL ARM64 (Linux ARM64 static libc)
-      shell: bash
-      working-directory: ${{ github.workspace }}
-      if: ${{ (inputs.os == 'alpine' || inputs.os == 'linuxstatic') && inputs.arch == 'arm64' }}
-      run: |
-        curl -LO https://musl-cc.norantec.com/aarch64-linux-musl-cross.tgz
-        tar zxvf aarch64-linux-musl-cross.tgz
-        rm -rf aarch64-linux-musl-cross.tgz
-
-    - name: Setup MUSL x64 (Linux x64 static libc)
-      shell: bash
-      working-directory: ${{ github.workspace }}
-      if: ${{ (inputs.os == 'alpine' || inputs.os == 'linuxstatic') && inputs.arch == 'x64' }}
-      run: |
-        curl -LO https://musl-cc.norantec.com/x86_64-linux-musl-cross.tgz
-        tar zxvf x86_64-linux-musl-cross.tgz
-        rm -rf x86_64-linux-musl-cross.tgz
+    - name: Setup Zig (Linux static libc)
+      if: ${{ inputs.os == 'alpine' || inputs.os == 'linuxstatic' }}
+      uses: https://codeberg.org/mlugg/setup-zig@v2
 
     - name: Set up Python (Windows)
       if: ${{ inputs.os == 'windows' }}
@@ -140,41 +127,26 @@ runs:
             ;;
         esac
 
-        if [[ ("$OS" == "alpine" || "$OS" == "linuxstatic")  && "$ARCH" == "arm64" ]]; then
-          echo "${{ github.workspace }}/aarch64-linux-musl-cross/bin" >> $GITHUB_PATH
-          BUILD_ARGS="$BUILD_ARGS --dest-cpu=arm64 --dest-os=linux --cross-compiling"
-          case "$OS" in
-            linuxstatic)
-              echo "CC=aarch64-linux-musl-gcc" >> $GITHUB_ENV
-              echo "CXX=aarch64-linux-musl-g++" >> $GITHUB_ENV
-              echo "CFLAGS=-static" >> $GITHUB_ENV
-              echo "CXXFLAGS=-static" >> $GITHUB_ENV
-              ;;
-            alpine)
-              echo "CC=aarch64-linux-musl-gcc" >> $GITHUB_ENV
-              echo "CXX=aarch64-linux-musl-g++" >> $GITHUB_ENV
-              ;;
-          esac
-          echo "AR=aarch64-linux-musl-ar" >> $GITHUB_ENV
-          echo "RANLIB=aarch64-linux-musl-ranlib" >> $GITHUB_ENV
-        fi
+        if [[ "$OS" == "alpine" || "$OS" == "linuxstatic" ]]; then
+          BUILD_ARGS="$BUILD_ARGS --dest-cpu=$ARCH --dest-os=linux --cross-compiling
+          echo "AR=llvm-ar" >> $GITHUB_ENV
+          echo "RANLIB=llvm-ranlib" >> $GITHUB_ENV
 
-        if [[ ("$OS" == "alpine" || "$OS" == "linuxstatic")  && "$ARCH" == "x64" ]]; then
-          echo "${{ github.workspace }}/x86_64-linux-musl-cross/bin" >> $GITHUB_PATH
-          case "$OS" in
-            linuxstatic)
-              echo "CC=x86_64-linux-musl-gcc" >> $GITHUB_ENV
-              echo "CXX=x86_64-linux-musl-g++" >> $GITHUB_ENV
-              echo "CFLAGS=-static" >> $GITHUB_ENV
-              echo "CXXFLAGS=-static" >> $GITHUB_ENV
+          if [[ "$OS" == "linuxstatic" ]]; then
+            echo "CFLAGS=-static" >> $GITHUB_ENV
+            echo "CXXFLAGS=-static" >> $GITHUB_ENV
+          fi
+
+          case "$ARCH" in
+            arm64)
+              echo "CC=zig cc -target aarch64-linux-musl" >> $GITHUB_ENV
+              echo "CXX=zig c++ -target aarch64-linux-musl" >> $GITHUB_ENV
               ;;
-            alpine)
-              echo "CC=x86_64-linux-musl-gcc" >> $GITHUB_ENV
-              echo "CXX=x86_64-linux-musl-g++" >> $GITHUB_ENV
+            x64)
+              echo "CC=zig cc x86_64-linux-musl" >> $GITHUB_ENV
+              echo "CXX=zig c++ x86_64-linux-musl" >> $GITHUB_ENV
               ;;
           esac
-          echo "AR=x86_64-linux-musl-ar" >> $GITHUB_ENV
-          echo "RANLIB=x86_64-linux-musl-ranlib" >> $GITHUB_ENV
         fi
 
         if [[ "$OS" == "darwin" ]]; then
