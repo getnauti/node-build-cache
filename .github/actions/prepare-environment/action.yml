@@ -35,7 +35,6 @@ runs:
           musl-tools
 
     - name: Setup XCode (Darwin)
-      shell: bash
       if: ${{ inputs.os == 'darwin' }}
       uses: maxim-lobanov/setup-xcode@v1
       with:
@@ -84,7 +83,6 @@ runs:
         rm -rf x86_64-linux-musl-cross.tgz
 
     - name: Set up Python (Windows)
-      shell: pwsh
       if: ${{ inputs.os == 'windows' }}
       uses: actions/setup-python@v6
       with:
