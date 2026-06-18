@@ -130,7 +130,7 @@ runs:
         esac
 
         if [[ "$OS" == "alpine" || "$OS" == "linuxstatic" ]]; then
-          BUILD_ARGS="$BUILD_ARGS --dest-cpu=$ARCH --dest-os=linux --cross-compiling
+          BUILD_ARGS="$BUILD_ARGS --dest-cpu=$ARCH --dest-os=linux --cross-compiling"
           echo "AR=llvm-ar" >> $GITHUB_ENV
           echo "RANLIB=llvm-ranlib" >> $GITHUB_ENV
 
