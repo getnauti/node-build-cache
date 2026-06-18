@@ -45,6 +45,7 @@ jobs:
         if: ${{ (matrix.target.os == 'linuxstatic' || matrix.target.os == 'alpine') && matrix.target.arch == 'x64' }}
         run: |
           uname -m
+          echo "which: $(which x86_64-linux-musl-gcc)"
           file "$(which x86_64-linux-musl-gcc)"
           x86_64-linux-musl-gcc --version
           x86_64-linux-musl-g++ --version
@@ -54,7 +55,8 @@ jobs:
         if: ${{ (matrix.target.os == 'linuxstatic' || matrix.target.os == 'alpine') && matrix.target.arch == 'arm64' }}
         run: |
           uname -m
-          file "$(which x86_64-linux-musl-gcc)"
+          echo "which: $(which aarch64-linux-musl-gcc)"
+          file "$(which aarch64-linux-musl-gcc)"
           aarch64-linux-musl-gcc --version
           aarch64-linux-musl-g++ --version
 
