@@ -3,6 +3,8 @@ name: Build Node Cache
 inputs:
   node_version:
     required: true
+  runner:
+    required: true
   os:
     required: true
   arch:
@@ -80,11 +82,11 @@ runs:
         mkdir -p ${{ github.workspace }}/.bin
         cat > ${{ github.workspace }}/.bin/x86_64-linux-musl-gcc <<'EOF'
         #!/bin/bash
-        exec zig cc -target x86_64-linux-musl -target-feature +evex512 "$@"
+        exec zig cc -target x86_64-linux-musl -Xclang -target-feature +evex512 "$@"
         EOF
         cat > ${{ github.workspace }}/.bin/x86_64-linux-musl-g++ <<'EOF'
         #!/bin/bash
-        exec zig c++ -target x86_64-linux-musl -target-feature +evex512 "$@"
+        exec zig c++ -target x86_64-linux-musl -Xclang -target-feature +evex512 "$@"
         EOF
         cat > ${{ github.workspace }}/.bin/aarch64-linux-musl-gcc <<'EOF'
         #!/bin/bash
@@ -221,3 +223,11 @@ runs:
       run: |
         Add-Content -Path $env:GITHUB_ENV -Value "config_flags=--without-inspector --without-npm --use-ccache-win --with-ltcg"
         Add-Content -Path $env:GITHUB_ENV -Value "SCCACHE_DIR=${{ github.workspace }}/.ccache"
+
+    - name: Setup ccache (Linux hosts)
+      shell: bash
+      if: ${{ inputs.runner == 'ubuntu-24.04' || inputs.runner == 'ubuntu-24.04-arm' }}
+      run: |
+        mkdir -p "${{ env.CCACHE_DIR }}"
+        ccache --set-config=max_size=10G
+        ccache --zero-stats
