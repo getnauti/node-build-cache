@@ -73,7 +73,7 @@ runs:
 
     - uses: goto-bus-stop/setup-zig@v2
       with:
-        version: 0.15.1
+        version: 0.12.0
 
     - name: Setup Zig C compiler shell scripts (Linux static libc)
       shell: bash
@@ -181,8 +181,8 @@ runs:
             x64)
               echo "CC=x86_64-linux-musl-gcc" >> $GITHUB_ENV
               echo "CXX=x86_64-linux-musl-g++" >> $GITHUB_ENV
-              CFLAGS="$CFLAGS -march=x86_64"
-              CXXFLAGS="$CXXFLAGS -march=x86_64"
+              CFLAGS="$CFLAGS -march=native"
+              CXXFLAGS="$CXXFLAGS -march=native"
               ;;
           esac
 
