@@ -194,8 +194,8 @@ runs:
               ls -l /usr/lib/gcc/x86_64-linux-gnu/13/libatomic*
               echo "CC=x86_64-linux-musl-gcc" >> $GITHUB_ENV
               echo "CXX=x86_64-linux-musl-g++" >> $GITHUB_ENV
-              CFLAGS="$CFLAGS -L/usr/lib/gcc/x86_64-linux-gnu/13"
-              CXXFLAGS="$CXXFLAGS -L/usr/lib/gcc/x86_64-linux-gnu/13"
+              CFLAGS="$CFLAGS -L/usr/lib/gcc/x86_64-linux-gnu/13 -mevex512 -mavx512bw"
+              CXXFLAGS="$CXXFLAGS -L/usr/lib/gcc/x86_64-linux-gnu/13 -mevex512 -mavx512bw"
               echo "LDFLAGS=$LDFLAGS -L/usr/lib/gcc/x86_64-linux-gnu/13" >> $GITHUB_ENV
               ;;
           esac
