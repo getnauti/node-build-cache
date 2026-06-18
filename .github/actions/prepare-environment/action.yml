@@ -158,12 +158,12 @@ runs:
 
         if [[ "$OS" == "alpine" || "$OS" == "linuxstatic" ]]; then
           BUILD_ARGS="$BUILD_ARGS --dest-cpu=$ARCH --dest-os=linux --cross-compiling"
-          echo "AR=llvm-ar" >> $GITHUB_ENV
-          echo "RANLIB=llvm-ranlib" >> $GITHUB_ENV
+          CFLAGS="-mno-avx512f -mno-avx512bw -mno-avx512vl -mno-avx512dq"
+          CXXFLAGS="$CFLAGS"
 
           if [[ "$OS" == "linuxstatic" ]]; then
-            echo "CFLAGS=-static" >> $GITHUB_ENV
-            echo "CXXFLAGS=-static" >> $GITHUB_ENV
+            CFLAGS="$CFLAGS -static"
+            CXXFLAGS="$CXXFLAGS -static"
           fi
 
           case "$ARCH" in
@@ -197,6 +197,10 @@ runs:
         echo "CCACHE_DIR=${{ github.workspace }}/.ccache" >> $GITHUB_ENV
         echo "CCACHE_MAXSIZE=2G" >> $GITHUB_ENV
         echo "BUILD_ARGS=$BUILD_ARGS" >> $GITHUB_ENV
+        echo "CFLAGS=$CFLAGS" >> $GITHUB_ENV
+        echo "CXXFLAGS=$CXXFLAGS" >> $GITHUB_ENV
+        echo "AR=llvm-ar" >> $GITHUB_ENV
+        echo "RANLIB=llvm-ranlib" >> $GITHUB_ENV
 
     - name: Prepare environment variables (Windows)
       shell: pwsh
