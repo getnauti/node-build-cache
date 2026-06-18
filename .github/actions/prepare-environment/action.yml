@@ -77,26 +77,26 @@ runs:
       shell: bash
       if: ${{ inputs.os == 'alpine' || inputs.os == 'linuxstatic' }}
       run: |
-        cat > /usr/local/sbin/x86_64-linux-musl-gcc <<'EOF'
+        sudo cat > /usr/local/sbin/x86_64-linux-musl-gcc <<'EOF'
         #!/bin/bash
         exec zig cc -target x86_64-linux-musl "$@"
         EOF
-        cat > /usr/local/sbin/x86_64-linux-musl-g++ <<'EOF'
+        sudo cat > /usr/local/sbin/x86_64-linux-musl-g++ <<'EOF'
         #!/bin/bash
         exec zig c++ -target x86_64-linux-musl "$@"
         EOF
-        cat > /usr/local/sbin/aarch64-linux-musl-gcc <<'EOF'
+        sudo cat > /usr/local/sbin/aarch64-linux-musl-gcc <<'EOF'
         #!/bin/bash
         exec zig cc -target aarch64-linux-musl "$@"
         EOF
-        cat > /usr/local/sbin/aarch64-linux-musl-g++ <<'EOF'
+        sudo cat > /usr/local/sbin/aarch64-linux-musl-g++ <<'EOF'
         #!/bin/bash
         exec zig c++ -target aarch64-linux-musl "$@"
         EOF
-        chmod +x /usr/local/sbin/x86_64-linux-musl-gcc
-        chmod +x /usr/local/sbin/x86_64-linux-musl-g++
-        chmod +x /usr/local/sbin/aarch64-linux-musl-gcc
-        chmod +x /usr/local/sbin/aarch64-linux-musl-g++
+        sudo chmod +x /usr/local/sbin/x86_64-linux-musl-gcc
+        sudo chmod +x /usr/local/sbin/x86_64-linux-musl-g++
+        sudo chmod +x /usr/local/sbin/aarch64-linux-musl-gcc
+        sudo chmod +x /usr/local/sbin/aarch64-linux-musl-g++
 
     - name: Set up Python (Windows)
       if: ${{ inputs.os == 'windows' }}
