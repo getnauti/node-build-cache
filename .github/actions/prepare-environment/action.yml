@@ -38,7 +38,7 @@ runs:
           pkg-config \
           musl-tools \
           llvm \
-          ibatomic1 \
+          libatomic1 \
           libatomic-ops-dev
 
     - name: Setup XCode (Darwin)
