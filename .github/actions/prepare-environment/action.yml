@@ -125,7 +125,7 @@ runs:
             BUILD_ARGS="$BUILD_ARGS --partly-static"
             ;;
           darwin)
-            BUILD_ARGS="$BUILD_ARGS --dest-cpu=${{ inputs.arch }} --without-node-options --shared-zlib"
+            BUILD_ARGS="$BUILD_ARGS --dest-cpu=$ARCH --without-node-options --shared-zlib"
             ;;
         esac
 
