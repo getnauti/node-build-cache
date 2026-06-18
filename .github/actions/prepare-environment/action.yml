@@ -166,12 +166,12 @@ runs:
 
           case "$ARCH" in
             arm64)
-              echo "CC=zig cc -target aarch64-linux-musl" >> $GITHUB_ENV
-              echo "CXX=zig c++ -target aarch64-linux-musl" >> $GITHUB_ENV
+              echo "CC=aarch64-linux-musl-gcc" >> $GITHUB_ENV
+              echo "CXX=aarch64-linux-musl-g++" >> $GITHUB_ENV
               ;;
             x64)
-              echo "CC=zig cc x86_64-linux-musl" >> $GITHUB_ENV
-              echo "CXX=zig c++ x86_64-linux-musl" >> $GITHUB_ENV
+              echo "CC=x86_64-linux-musl-gcc" >> $GITHUB_ENV
+              echo "CXX=x86_64-linux-musl-g++" >> $GITHUB_ENV
               ;;
           esac
         fi
