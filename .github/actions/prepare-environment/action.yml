@@ -126,7 +126,7 @@ runs:
         ARCH: ${{ inputs.arch }}
       if: ${{ inputs.os != 'windows' }}
       run: |
-        BUILD_ARGS="--enable-lto --without-inspector --without-npm --with-intl=small-icu"
+        BUILD_ARGS="--enable-lto --without-inspector --without-npm"
 
         case "$OS" in
           linuxstatic)
@@ -139,8 +139,6 @@ runs:
             BUILD_ARGS="$BUILD_ARGS -dest-cpu ${{ inputs.arch }} --without-node-options --shared-zlib"
             ;;
         esac
-
-        echo "BUILD_ARGS=$BUILD_ARGS" >> $GITHUB_ENV
 
         if [[ ("$OS" == "alpine" || "$OS" == "linuxstatic")  && "$ARCH" == "arm64" ]]; then
           echo "${{ github.workspace }}/aarch64-linux-musl-cross/bin" >> $GITHUB_PATH
@@ -187,12 +185,16 @@ runs:
           echo "RANLIB=ranlib" >> $GITHUB_ENV
           echo "$(brew --prefix)/opt/make/libexec/gnubin" >> "$GITHUB_PATH"
           echo "$(brew --prefix)/opt/ccache/libexec" >> "$GITHUB_PATH"
+          BUILD_ARGS="$BUILD_ARGS --with-intl=small-icu"
+        else
+          BUILD_ARGS="$BUILD_ARGS --without-intl"
         fi
 
         echo "CCACHE_BASEDIR=${{ github.workspace }}" >> $GITHUB_ENV
         echo "CCACHE_COMPILERCHECK=content" >> $GITHUB_ENV
         echo "CCACHE_DIR=${{ github.workspace }}/.ccache" >> $GITHUB_ENV
         echo "CCACHE_MAXSIZE=2G" >> $GITHUB_ENV
+        echo "BUILD_ARGS=$BUILD_ARGS" >> $GITHUB_ENV
 
     - name: Prepare environment variables (Windows)
       shell: pwsh
