@@ -73,7 +73,7 @@ runs:
       if: ${{ inputs.os == 'alpine' || inputs.os == 'linuxstatic' }}
       uses: mlugg/setup-zig@v2
 
-    - name: Setup Zig CC/CXX shell scripts (Linux static libc)
+    - name: Setup Zig C compiler shell scripts (Linux static libc)
       if: ${{ inputs.os == 'alpine' || inputs.os == 'linuxstatic' }}
       run: |
         cat > /usr/local/sbin/x86_64-linux-musl-gcc <<'EOF'
