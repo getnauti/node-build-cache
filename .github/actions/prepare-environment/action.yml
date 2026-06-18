@@ -82,11 +82,11 @@ runs:
         mkdir -p ${{ github.workspace }}/.bin
         cat > ${{ github.workspace }}/.bin/x86_64-linux-musl-gcc <<'EOF'
         #!/bin/bash
-        exec zig cc -target x86_64-linux-musl -Xclang -target-feature +evex512 "$@"
+        exec zig cc -target x86_64-linux-musl "$@"
         EOF
         cat > ${{ github.workspace }}/.bin/x86_64-linux-musl-g++ <<'EOF'
         #!/bin/bash
-        exec zig c++ -target x86_64-linux-musl -Xclang -target-feature +evex512 "$@"
+        exec zig c++ -target x86_64-linux-musl "$@"
         EOF
         cat > ${{ github.workspace }}/.bin/aarch64-linux-musl-gcc <<'EOF'
         #!/bin/bash
@@ -181,8 +181,8 @@ runs:
             x64)
               echo "CC=x86_64-linux-musl-gcc" >> $GITHUB_ENV
               echo "CXX=x86_64-linux-musl-g++" >> $GITHUB_ENV
-              CFLAGS="$CFLAGS -mavx512f -mavx512bw -mavx512vl -mavx512dq"
-              CXXFLAGS="$CXXFLAGS -mavx512f -mavx512bw -mavx512vl -mavx512dq"
+              CFLAGS="$CFLAGS -mavx512f -mavx512bw -mavx512vl -mavx512dq -Xclang -target-feature +evex512"
+              CXXFLAGS="$CXXFLAGS -mavx512f -mavx512bw -mavx512vl -mavx512dq -Xclang -target-feature +evex512"
               ;;
           esac
 
