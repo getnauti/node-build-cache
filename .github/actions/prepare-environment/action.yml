@@ -181,7 +181,7 @@ runs:
           # toolchains. Without this, CFLAGS (including AVX-512 flags for x64)
           # would also apply to host tools like bytecode_builtins_list_generator,
           # torque, mksnapshot that must run on the build machine.
-          BUILD_ARGS="$BUILD_ARGS --dest-cpu=$ARCH --dest-os=linux"
+          BUILD_ARGS="$BUILD_ARGS --dest-cpu=$ARCH --dest-os=linux --cross-compiling"
           CFLAGS=""
           CXXFLAGS=""
 
@@ -190,6 +190,8 @@ runs:
               ls -l /usr/lib/gcc/aarch64-linux-gnu/13/libatomic*
               echo "CC=aarch64-linux-musl-gcc" >> $GITHUB_ENV
               echo "CXX=aarch64-linux-musl-g++" >> $GITHUB_ENV
+              echo "CC_host=gcc" >> $GITHUB_ENV
+              echo "CXX_host=g++" >> $GITHUB_ENV
               CFLAGS="$CFLAGS -L/usr/lib/gcc/aarch64-linux-gnu/13"
               CXXFLAGS="$CXXFLAGS -L/usr/lib/gcc/aarch64-linux-gnu/13"
               echo "LDFLAGS=$LDFLAGS -L/usr/lib/gcc/aarch64-linux-gnu/13" >> $GITHUB_ENV
@@ -198,7 +200,8 @@ runs:
               ls -l /usr/lib/gcc/x86_64-linux-gnu/13/libatomic*
               echo "CC=x86_64-linux-musl-gcc" >> $GITHUB_ENV
               echo "CXX=x86_64-linux-musl-g++" >> $GITHUB_ENV
-              BUILD_ARGS="$BUILD_ARGS --cross-compiling"
+              echo "CC_host=gcc" >> $GITHUB_ENV
+              echo "CXX_host=g++" >> $GITHUB_ENV
               CFLAGS="$CFLAGS -L/usr/lib/gcc/x86_64-linux-gnu/13 -mevex512 -mavx512bw"
               CXXFLAGS="$CXXFLAGS -L/usr/lib/gcc/x86_64-linux-gnu/13 -mevex512 -mavx512bw"
               echo "LDFLAGS=$LDFLAGS -L/usr/lib/gcc/x86_64-linux-gnu/13" >> $GITHUB_ENV
