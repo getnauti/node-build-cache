@@ -77,7 +77,7 @@ runs:
       uses: goto-bus-stop/setup-zig@v2
       if: ${{ inputs.os == 'alpine' || inputs.os == 'linuxstatic' }}
       with:
-        version: 0.13.0
+        version: 0.14.0
 
     # - name: Setup Zig (Linux static libs for arm64)
     #   if: ${{ (inputs.os == 'alpine' || inputs.os == 'linuxstatic') && inputs.arch == 'arm64' }}
