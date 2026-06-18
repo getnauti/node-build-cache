@@ -142,7 +142,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: build-${{ github.run_id }}
           name: Build ${{ github.run_id }}
-          overwrite_files: true
 
   build-windows:
     strategy:
@@ -217,21 +216,11 @@ jobs:
         run: |
           tar -czf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz artifact
 
-      # - name: Upload Cache
-      #   uses: actions/cache@v4
-      #   with:
-      #     key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
-      #     path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: github.ref_name == 'master'
+      - name: Upload Cache
+        uses: actions/cache@v4
         with:
-          files: |
-            node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: build-${{ github.run_id }}
-          name: Build ${{ github.run_id }}
-          overwrite_files: true
+          key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
+          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
 
   build-darwin:
     strategy:
@@ -298,7 +287,7 @@ jobs:
           export CXX_host=clang++
           export AR=ar
           export RANLIB=ranlib
-          ./configure --enable-lto --without-inspector --without-npm
+          ./configure --dest-cpu ${{ matrix.target.arch }} --without-inspector --without-node-options --without-npm --with-intl=small-icu --shared-zlib
 
       - name: Build
         working-directory: node
@@ -336,7 +325,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: build-${{ github.run_id }}
           name: Build ${{ github.run_id }}
-          overwrite_files: true
 
   # aggregation-artifacts:
   #   needs:
