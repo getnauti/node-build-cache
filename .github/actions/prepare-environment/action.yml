@@ -40,6 +40,7 @@ runs:
           llvm \
           libatomic1 \
           libatomic-ops-dev
+          find /usr -name "libatomic*"
 
     - name: Setup XCode (Darwin)
       if: ${{ inputs.os == 'darwin' }}
