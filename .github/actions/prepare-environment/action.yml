@@ -77,6 +77,7 @@ runs:
       shell: bash
       if: ${{ inputs.os == 'alpine' || inputs.os == 'linuxstatic' }}
       run: |
+        mkdir -p ${{ github.workspace }}/.bin
         cat > ${{ github.workspace }}/.bin/x86_64-linux-musl-gcc <<'EOF'
         #!/bin/bash
         exec zig cc -target x86_64-linux-musl "$@"
