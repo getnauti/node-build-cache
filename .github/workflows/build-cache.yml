@@ -24,8 +24,8 @@ jobs:
           - { os: "linuxstatic", arch: "arm64", runner: "ubuntu-24.04" }
           - { os: "windows", arch: "x64", runner: "windows-2022" }
           - { os: "windows", arch: "arm64", runner: "windows-11-arm" }
-          - { os: "darwin", arch: "x64", runner: "macos-14-intel" }
-          - { os: "darwin", arch: "arm64", runner: "macos-14" }
+          - { os: "darwin", arch: "x64", runner: "macos-15-intel" }
+          - { os: "darwin", arch: "arm64", runner: "macos-15" }
 
     runs-on: ${{ matrix.target.runner }}
 
