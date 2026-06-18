@@ -40,6 +40,20 @@ jobs:
           os: ${{ matrix.target.os }}
           arch: ${{ matrix.target.arch }}
 
+      - name: Check musl compiler (Linux x64)
+        working-directory: node
+        if: ${{ matrix.target.os != 'windows' && matrix.target.os != 'darwin' && matrix.target.arch == 'x64' }}
+        run: |
+          x86_64-linux-musl-gcc --version
+          x86_64-linux-musl-g++ --version
+
+      - name: Check musl compiler (Linux arm64)
+        working-directory: node
+        if: ${{ matrix.target.os != 'windows' && matrix.target.os != 'darwin' && matrix.target.arch == 'arm64' }}
+        run: |
+          aarch64-linux-musl-gcc --version
+          aarch64-linux-musl-g++ --version
+
       - name: Configure (Linux/Darwin)
         working-directory: node
         if: ${{ matrix.target.os != 'windows' }}
