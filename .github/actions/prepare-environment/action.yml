@@ -94,10 +94,20 @@ runs:
         #!/bin/bash
         exec zig c++ -target aarch64-linux-musl "$@"
         EOF
+        cat > ${{ github.workspace }}/.bin/musl-ar <<'EOF'
+        #!/bin/bash
+        exec zig ar "$@"
+        EOF
+        cat > ${{ github.workspace }}/.bin/musl-ranlib <<'EOF'
+        #!/bin/bash
+        exec zig rannlib "$@"
+        EOF
         chmod +x ${{ github.workspace }}/.bin/x86_64-linux-musl-gcc
         chmod +x ${{ github.workspace }}/.bin/x86_64-linux-musl-g++
         chmod +x ${{ github.workspace }}/.bin/aarch64-linux-musl-gcc
         chmod +x ${{ github.workspace }}/.bin/aarch64-linux-musl-g++
+        chmod +x ${{ github.workspace }}/.bin/musl-ar
+        chmod +x ${{ github.workspace }}/.bin/musl-ranlib
         echo "${{ github.workspace }}/.bin" >> "$GITHUB_PATH"
 
     - name: Set up Python (Windows)
@@ -178,6 +188,9 @@ runs:
             CFLAGS="$CFLAGS -static"
             CXXFLAGS="$CXXFLAGS -static"
           fi
+
+          echo "AR=musl-ar" >> $GITHUB_ENV
+          echo "RANLIB=musl-ranlib" >> $GITHUB_ENV
         fi
 
         if [[ "$OS" == "darwin" ]]; then
@@ -201,8 +214,6 @@ runs:
         echo "BUILD_ARGS=$BUILD_ARGS" >> $GITHUB_ENV
         echo "CFLAGS=$CFLAGS" >> $GITHUB_ENV
         echo "CXXFLAGS=$CXXFLAGS" >> $GITHUB_ENV
-        echo "AR=llvm-ar" >> $GITHUB_ENV
-        echo "RANLIB=llvm-ranlib" >> $GITHUB_ENV
 
     - name: Prepare environment variables (Windows)
       shell: pwsh
