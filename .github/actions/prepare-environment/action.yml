@@ -68,6 +68,7 @@ runs:
 
     - name: Setup MUSL ARM64 (Linux ARM64 static libc)
       shell: bash
+      working-directory: ${{ github.workspace }}
       if: ${{ (inputs.os == 'alpine' || inputs.os == 'linuxstatic') && inputs.arch == 'arm64' }}
       run: |
         curl -LO https://github.com/troglobit/misc/releases/download/11-20211120/aarch64-linux-musl-cross.tgz
@@ -76,6 +77,7 @@ runs:
 
     - name: Setup MUSL x64 (Linux x64 static libc)
       shell: bash
+      working-directory: ${{ github.workspace }}
       if: ${{ (inputs.os == 'alpine' || inputs.os == 'linuxstatic') && inputs.arch == 'x64' }}
       run: |
         curl -LO https://github.com/troglobit/misc/releases/download/11-20211120/x86_64-linux-musl-cross.tgz
@@ -97,6 +99,7 @@ runs:
 
     - name: Setup ccache launcher (Windows)
       shell: pwsh
+      working-directory: ${{ github.workspace }}
       if: ${{ inputs.os == 'windows' }}
       run: |
         mkdir .\ccache-bin
