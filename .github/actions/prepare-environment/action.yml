@@ -213,8 +213,11 @@ runs:
             CXXFLAGS="$CXXFLAGS -static"
           fi
 
-          echo "AR=musl-ar" >> $GITHUB_ENV
-          echo "RANLIB=musl-ranlib" >> $GITHUB_ENV
+          # Use native ar/ranlib for both host and target toolchains.
+          # musl-ar (zig ar) creates thin archives incompatible with
+          # GNU ld's LTO plugin when linking host tools compiled by GCC.
+          echo "AR=ar" >> $GITHUB_ENV
+          echo "RANLIB=ranlib" >> $GITHUB_ENV
         fi
 
         if [[ "$OS" == "darwin" ]]; then
