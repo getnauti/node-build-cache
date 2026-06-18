@@ -71,7 +71,7 @@ runs:
       if: ${{ (inputs.os == 'alpine' || inputs.os == 'linuxstatic') && inputs.arch == 'arm64' }}
       run: |
         curl -LO https://github.com/troglobit/misc/releases/download/11-20211120/aarch64-linux-musl-cross.tgz
-        tar zvf aarch64-linux-musl-cross.tgz
+        tar zxvf aarch64-linux-musl-cross.tgz
         rm -rf aarch64-linux-musl-cross.tgz
 
     - name: Setup MUSL x64 (Linux x64 static libc)
@@ -79,7 +79,7 @@ runs:
       if: ${{ (inputs.os == 'alpine' || inputs.os == 'linuxstatic') && inputs.arch == 'x64' }}
       run: |
         curl -LO https://github.com/troglobit/misc/releases/download/11-20211120/x86_64-linux-musl-cross.tgz
-        tar zvf x86_64-linux-musl-cross.tgz
+        tar zxvf x86_64-linux-musl-cross.tgz
         rm -rf x86_64-linux-musl-cross.tgz
 
     - name: Set up Python (Windows)
