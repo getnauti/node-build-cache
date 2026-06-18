@@ -70,9 +70,9 @@ jobs:
         run: |
           mkdir artifact
           ls -al
-          cp -r node artifact/node || true
+          mv node artifact/ || true
           ls -al .ccache || true
-          cp -r .ccache artifact/.ccache || true
+          mv .ccache artifact/ || true
 
       - name: Create archive
         shell: bash
