@@ -143,8 +143,8 @@ runs:
           echo "./aarch64-linux-musl-cross/bin" >> $GITHUB_PATH
           case "$OS" in
             linuxstatic)
-              echo "CC=\"aarch64-linux-musl-gcc -static\"" >> $GITHUB_ENV
-              echo "CXX=\"aarch64-linux-musl-g++ -static\"" >> $GITHUB_ENV
+              echo "CC=aarch64-linux-musl-gcc -static" >> $GITHUB_ENV
+              echo "CXX=aarch64-linux-musl-g++ -static" >> $GITHUB_ENV
               ;;
             alpine)
               echo "CC=aarch64-linux-musl-gcc" >> $GITHUB_ENV
@@ -159,8 +159,8 @@ runs:
           echo "./x86_64-linux-musl-cross/bin" >> $GITHUB_PATH
           case "$OS" in
             linuxstatic)
-              echo "CC=\"x86_64-linux-musl-gcc -static\"" >> $GITHUB_ENV
-              echo "CXX=\"x86_64-linux-musl-g++ -static\"" >> $GITHUB_ENV
+              echo "CC=x86_64-linux-musl-gcc -static" >> $GITHUB_ENV
+              echo "CXX=x86_64-linux-musl-g++ -static" >> $GITHUB_ENV
               ;;
             alpine)
               echo "CC=x86_64-linux-musl-gcc" >> $GITHUB_ENV
