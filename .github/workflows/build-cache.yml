@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  discussions: write
 
 jobs:
   load-matrix:
@@ -28,7 +29,11 @@ jobs:
   build:
     needs: load-matrix
 
+    env:
+      ACTIONS_STEP_DEBUG: true
+
     strategy:
+      fail-fast: false
       matrix: ${{ fromJson(needs.load-matrix.outputs.matrix) }}
 
     runs-on: ${{ matrix.target.runner }}
@@ -76,30 +81,7 @@ jobs:
         shell: bash
         run: |
           tar -czf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz artifact
-
-      - name: Upload Cache
-        uses: actions/cache@v4
-        with:
-          key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
-          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
-
-  release:
-    needs:
-      - load-matrix
-      - build
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix: ${{ fromJson(needs.load-matrix.outputs.matrix) }}
-
-    steps:
-      - name: Download Cache
-        uses: actions/cache@v4
-        id: cache
-        with:
-          key: ${{ github.run_id }}-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}
-          path: node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz
+          ls -lh *.tar.gz
 
       - name: Split package
         shell: bash
@@ -108,7 +90,7 @@ jobs:
           ls -lh *.part.*
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: Build ${{ github.run_id }}
           token: ${{ secrets.GITHUB_TOKEN }}
