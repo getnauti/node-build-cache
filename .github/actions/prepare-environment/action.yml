@@ -233,7 +233,10 @@ runs:
           JOBS=$(sysctl -n hw.ncpu)
           BUILD_ARGS="$BUILD_ARGS --with-intl=small-icu"
         else
-          BUILD_ARGS="$BUILD_ARGS --without-intl --enable-lto"
+          if [[ "$OS" == "linux" ]]; then
+            BUILD_ARGS="$BUILD_ARGS --enable-lto"
+          fi
+          BUILD_ARGS="$BUILD_ARGS --without-intl"
           JOBS=$(nproc)
         fi
 
