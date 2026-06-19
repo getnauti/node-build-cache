@@ -193,6 +193,9 @@ runs:
               echo "CXX=aarch64-linux-musl-g++" >> $GITHUB_ENV
               echo "CC_host=gcc" >> $GITHUB_ENV
               echo "CXX_host=g++" >> $GITHUB_ENV
+              # GCC 13 on arm64 enforces strict NEON vector type checks that
+              # V8's simd.cc doesn't comply with (uint8x16_t -> uint16x8_t etc.)
+              echo "CXXFLAGS_host=-flax-vector-conversions" >> $GITHUB_ENV
               CFLAGS="$CFLAGS -L/usr/lib/gcc/aarch64-linux-gnu/13"
               CXXFLAGS="$CXXFLAGS -L/usr/lib/gcc/aarch64-linux-gnu/13"
               echo "LDFLAGS=$LDFLAGS -L/usr/lib/gcc/aarch64-linux-gnu/13" >> $GITHUB_ENV
