@@ -95,5 +95,6 @@ jobs:
           name: Build ${{ github.run_id }}
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: build-${{ github.run_id }}
+          make_latest: true
           files: |
             node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz.part.*
