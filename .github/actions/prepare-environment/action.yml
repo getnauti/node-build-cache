@@ -67,7 +67,7 @@ runs:
       shell: bash
       if: ${{ inputs.os == 'darwin' }}
       run: |
-        sudo brew cleanup -s
+        brew cleanup -s
         sudo rm -rf "$(brew --cache)" \
           /Users/runner/Library/Android/sdk \
           /Users/runner/Library/Developer/CoreSimulator \
