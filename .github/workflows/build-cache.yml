@@ -62,6 +62,12 @@ jobs:
         run: |
           make -j$JOBS
 
+      - name: Cleanup (Darwin)
+        working-directory: node
+        if: ${{ matrix.target.os == 'darwin' }}
+        run: |
+          find out -name "*.dSYM" -exec rm -rf {} \; || true
+
       - name: Build (Windows)
         if: ${{ matrix.target.os == 'windows' }}
         working-directory: node
