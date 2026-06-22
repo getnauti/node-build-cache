@@ -67,6 +67,9 @@ jobs:
         if: ${{ matrix.target.os == 'darwin' }}
         run: |
           find out -name "*.dSYM" -exec rm -rf {} \; || true
+          sudo rm -rf /Applications/Xcode.app || true
+          sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes/* || true
+          rm -rf ~/Library/Developer/Xcode/DerivedData || true
 
       - name: Build (Windows)
         if: ${{ matrix.target.os == 'windows' }}
@@ -88,6 +91,7 @@ jobs:
         run: |
           tar -czf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz artifact
           ls -lh *.tar.gz
+          sudo rm -rf artifact || true
 
       - name: Split package
         shell: bash
