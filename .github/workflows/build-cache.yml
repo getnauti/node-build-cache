@@ -79,7 +79,7 @@ jobs:
 
       - name: Create archive
         shell: bash
-        working-directory: node/out/Release
+        working-directory: node
         run: |
           ls -alh
           tar czvf ../../../libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz $(find out -type f -name '*.a')
