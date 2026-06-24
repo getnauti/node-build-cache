@@ -75,36 +75,37 @@ jobs:
         if: ${{ matrix.target.os == 'windows' }}
         working-directory: node
         run: |
-          cmd /c "vcbuild.bat ${{ matrix.target.arch }} full-icu ccache %GITHUB_WORKSPACE%\ccache-bin"
-
-      - name: Package build cache
-        shell: bash
-        run: |
-          mkdir artifact
-          ls -al
-          mv node artifact/ || true
-          ls -al .ccache || true
-          mv .ccache artifact/ || true
+          cmd /c "vcbuild.bat ${{ matrix.target.arch }} dll full-icu ccache %GITHUB_WORKSPACE%\ccache-bin"
 
       - name: Create archive
         shell: bash
+        working-directory: node/out/Release
         run: |
-          tar -czf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz artifact
-          ls -lh *.tar.gz
-          sudo rm -rf artifact || true
+          ls -al
+          ln libnode.*.dylib libnode.dylib || true
+          ln libnode.so.* libnode.so || true
+          tar -czvf libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz node libnode.* || true
 
-      - name: Split package
-        shell: bash
-        run: |
-          split -b 1900M node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz.part.
-          ls -lh *.part.*
+      # - name: Create archive
+      #   shell: bash
+      #   run: |
+      #     tar -czf node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz artifact
+      #     ls -lh *.tar.gz
+      #     sudo rm -rf artifact || true
+
+      # - name: Split package
+      #   shell: bash
+      #   run: |
+      #     split -b 1900M node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz.part.
+      #     ls -lh *.part.*
 
       - name: Release
         uses: softprops/action-gh-release@v3
+        working-directory: node/out/Release
         with:
           name: Build ${{ github.run_id }}
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: build-${{ github.run_id }}
           make_latest: true
           files: |
-            node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz.part.*
+            node-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz

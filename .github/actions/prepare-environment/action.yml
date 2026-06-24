@@ -170,7 +170,7 @@ runs:
         ARCH: ${{ inputs.arch }}
       if: ${{ inputs.os != 'windows' }}
       run: |
-        BUILD_ARGS="--without-inspector --without-npm"
+        BUILD_ARGS="--without-inspector --without-npm --shared"
         JOBS=""
 
         case "$OS" in
