@@ -82,7 +82,7 @@ jobs:
         working-directory: node/out/Release
         run: |
           ls -alh
-          tar czvf ../../../libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.a.tar.gz libnode.a
+          mv libnode.a ../../../libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.a
 
       - name: List archive
         shell: bash
@@ -110,4 +110,4 @@ jobs:
           tag_name: build-${{ github.run_id }}
           make_latest: true
           files: |
-            libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.a.tar.gz
+            libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.a
