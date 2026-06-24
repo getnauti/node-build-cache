@@ -82,9 +82,7 @@ jobs:
         working-directory: node/out/Release
         run: |
           ls -al
-          ln libnode.*.dylib libnode.dylib || true
-          ln libnode.so.* libnode.so || true
-          tar -czvf ../../../libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz node libnode.* || true
+          tar czvf libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.a.tar.gz libnode.a
 
       - name: List archive
         shell: bash
