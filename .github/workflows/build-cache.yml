@@ -91,7 +91,7 @@ jobs:
         working-directory: node
         run: |
           ls -alh
-          tar czvf ../../../libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz $(find out -type f -name '*.lib')
+          tar czvf ../libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz $(find out -type f -name '*.lib')
 
       - name: Cleanup source code and list archive
         shell: bash
