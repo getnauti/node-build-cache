@@ -77,12 +77,21 @@ jobs:
         run: |
           cmd /c "vcbuild.bat ${{ matrix.target.arch }} dll full-icu ccache %GITHUB_WORKSPACE%\ccache-bin"
 
-      - name: Create archive
+      - name: Create archive (Linux/Darwin)
         shell: bash
+        if: ${{ matrix.target.os != 'windows' }}
         working-directory: node/out/Release
         run: |
           ls -alh
           tar czvf ../../../libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz $(find out -type f -name '*.a')
+
+      - name: Create archive (Windows)
+        shell: bash
+        if: ${{ matrix.target.os == 'windows' }}
+        working-directory: node/out/Release
+        run: |
+          ls -alh
+          tar czvf ../../../libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz $(find out -type f -name '*.lib')
 
       - name: Cleanup source code and list archive
         shell: bash
