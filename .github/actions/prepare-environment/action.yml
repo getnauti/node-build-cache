@@ -135,11 +135,15 @@ runs:
         python-version: '3.12'
         check-latest: true
 
-    - name: Install NASM (Windows)
+    - name: Setup NASM (Windows)
+      if: ${{ inputs.os == 'windows' }}
+      uses: ilammy/setup-nasm@v1
+
+    - name: Install Dependencies (Windows)
       shell: cmd
       if: ${{ inputs.os == 'windows' }}
       run: |
-        choco install nasm sccache llvm -y
+        choco install sccache llvm -y
 
     - name: Setup ccache launcher (Windows)
       shell: pwsh

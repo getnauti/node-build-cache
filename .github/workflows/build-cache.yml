@@ -80,15 +80,15 @@ jobs:
       - name: Create archive (Linux/Darwin)
         shell: bash
         if: ${{ matrix.target.os != 'windows' }}
-        working-directory: node/out/Release
+        working-directory: node
         run: |
           ls -alh
-          tar czvf ../../../libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz $(find out -type f -name '*.a')
+          tar czvf ../libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz $(find out -type f -name '*.a')
 
       - name: Create archive (Windows)
         shell: bash
         if: ${{ matrix.target.os == 'windows' }}
-        working-directory: node/out/Release
+        working-directory: node
         run: |
           ls -alh
           tar czvf ../../../libnode-${{ matrix.node_version }}-${{ matrix.target.os }}-${{ matrix.target.arch }}.tar.gz $(find out -type f -name '*.lib')
