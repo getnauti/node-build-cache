@@ -75,7 +75,7 @@ jobs:
         if: ${{ matrix.target.os == 'windows' }}
         working-directory: node
         run: |
-          cmd /c "vcbuild.bat ${{ matrix.target.arch }} dll full-icu ccache %GITHUB_WORKSPACE%\ccache-bin"
+          cmd /c "vcbuild.bat ${{ matrix.target.arch }} static full-icu ccache %GITHUB_WORKSPACE%\ccache-bin"
 
       - name: Create archive (Linux/Darwin)
         shell: bash
