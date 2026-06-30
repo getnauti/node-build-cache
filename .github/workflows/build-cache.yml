@@ -56,6 +56,12 @@ jobs:
         run: |
           ./configure $BUILD_ARGS
 
+      - name: Configure (Linux MUSL)
+        working-directory: node
+        if: ${{ matrix.target.os == 'linuxstatic' || matrix.target.os == 'alpine' }}
+        run: |
+          sed -i 's/crsT/crs/g' out/Makefile
+
       - name: Make (Linux/Darwin)
         working-directory: node
         if: ${{ matrix.target.os != 'windows' }}
