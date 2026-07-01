@@ -275,8 +275,8 @@ runs:
                 echo "CXX=x86_64-linux-gnu-g++" >> $GITHUB_ENV
                 echo "CC_host=gcc" >> $GITHUB_ENV
                 echo "CXX_host=g++" >> $GITHUB_ENV
-                CFLAGS="$CFLAGS -mevex512 -mavx512bw"
-                CXXFLAGS="$CXXFLAGS -mevex512 -mavx512bw"
+                # CFLAGS="$CFLAGS -mevex512 -mavx512bw"
+                # CXXFLAGS="$CXXFLAGS -mevex512 -mavx512bw"
                 ;;
             esac
 
