@@ -33,7 +33,7 @@ jobs:
       ACTIONS_STEP_DEBUG: true
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix: ${{ fromJson(needs.load-matrix.outputs.matrix) }}
 
     runs-on: ${{ matrix.target.runner }}
