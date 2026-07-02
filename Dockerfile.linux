@@ -40,6 +40,9 @@ RUN dnf install -y \
 
 RUN alternatives --set python3 /usr/bin/python3.12
 
+ENV PATH="/opt/rh/gcc-toolset-13/root/usr/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/opt/rh/gcc-toolset-13/root/usr/lib64:${LD_LIBRARY_PATH}"
+
 RUN ./configure $BUILD_ARGS
 
 RUN sed -i 's/crsT/crs/g' out/Makefile
