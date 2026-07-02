@@ -69,7 +69,13 @@ jobs:
       - name: Build (Linux)
         if: ${{ matrix.target.os == 'linux' }}
         run: |
-          docker buildx build --no-cache --env-file $GITHUB_ENV -f ./Dockerfile.linux --output type=local,dest=node/out .
+          docker buildx build --no-cache \
+            --build-arg JOBS=$JOBS \
+            --build-arg BUILD_ARGS=$BUILD_ARGS \
+            --build-arg CFLAGS=$CFLAGS \
+            --build-arg CXXFLAGS=$CXXFLAGS \
+            -f ./Dockerfile.linux \
+            --output type=local,dest=node/out .
 
       - name: Cleanup (Darwin)
         working-directory: node
