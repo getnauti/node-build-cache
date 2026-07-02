@@ -3,9 +3,7 @@ name: Build Node.js Cache
 on:
   push:
     branches:
-      - '*'
-      - '**'
-      - '*/*'
+      - master
 
 permissions:
   contents: write

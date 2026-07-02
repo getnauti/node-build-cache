@@ -112,11 +112,27 @@ runs:
         #!/bin/bash
         exec zig c++ -target aarch64-linux-musl "$@"
         EOF
-        cat > ${{ github.workspace }}/.bin/musl-ar <<'EOF'
+        cat > ${{ github.workspace }}/.bin/x86_64-linux-gnu-gcc <<'EOF'
+        #!/bin/bash
+        exec zig cc -target x86_64-linux-gnu.2.28 "$@"
+        EOF
+        cat > ${{ github.workspace }}/.bin/x86_64-linux-gnu-g++ <<'EOF'
+        #!/bin/bash
+        exec zig c++ -target x86_64-linux-gnu.2.28 "$@"
+        EOF
+        cat > ${{ github.workspace }}/.bin/aarch64-linux-gnu-gcc <<'EOF'
+        #!/bin/bash
+        exec zig cc -target aarch64-linux-gnu.2.28 "$@"
+        EOF
+        cat > ${{ github.workspace }}/.bin/aarch64-linux-gnu-g++ <<'EOF'
+        #!/bin/bash
+        exec zig c++ -target aarch64-linux-gnu.2.28 "$@"
+        EOF
+        cat > ${{ github.workspace }}/.bin/zig-ar <<'EOF'
         #!/bin/bash
         exec zig ar "$@"
         EOF
-        cat > ${{ github.workspace }}/.bin/musl-ranlib <<'EOF'
+        cat > ${{ github.workspace }}/.bin/zig-ranlib <<'EOF'
         #!/bin/bash
         exec zig rannlib "$@"
         EOF
@@ -124,8 +140,6 @@ runs:
         chmod +x ${{ github.workspace }}/.bin/x86_64-linux-musl-g++
         chmod +x ${{ github.workspace }}/.bin/aarch64-linux-musl-gcc
         chmod +x ${{ github.workspace }}/.bin/aarch64-linux-musl-g++
-        chmod +x ${{ github.workspace }}/.bin/musl-ar
-        chmod +x ${{ github.workspace }}/.bin/musl-ranlib
         echo "${{ github.workspace }}/.bin" >> "$GITHUB_PATH"
 
     - name: Set up Python (Windows)
@@ -246,6 +260,26 @@ runs:
           BUILD_ARGS="$BUILD_ARGS --with-intl=small-icu"
         else
           if [[ "$OS" == "linux" ]]; then
+            case "$ARCH" in
+              arm64)
+                echo "CC=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
+                echo "CXX=aarch64-linux-gnu-g++" >> $GITHUB_ENV
+                echo "CC_host=gcc" >> $GITHUB_ENV
+                echo "CXX_host=g++" >> $GITHUB_ENV
+                # GCC 13 on arm64 enforces strict NEON vector type checks that
+                # V8's simd.cc doesn't comply with (uint8x16_t -> uint16x8_t etc.)
+                echo "CXXFLAGS_host=-flax-vector-conversions" >> $GITHUB_ENV
+                ;;
+              x64)
+                echo "CC=x86_64-linux-gnu-gcc" >> $GITHUB_ENV
+                echo "CXX=x86_64-linux-gnu-g++" >> $GITHUB_ENV
+                echo "CC_host=gcc" >> $GITHUB_ENV
+                echo "CXX_host=g++" >> $GITHUB_ENV
+                # CFLAGS="$CFLAGS -mevex512 -mavx512bw"
+                # CXXFLAGS="$CXXFLAGS -mevex512 -mavx512bw"
+                ;;
+            esac
+
             BUILD_ARGS="$BUILD_ARGS --enable-lto"
           fi
           BUILD_ARGS="$BUILD_ARGS --without-intl"
