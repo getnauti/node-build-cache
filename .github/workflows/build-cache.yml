@@ -71,9 +71,9 @@ jobs:
         run: |
           docker buildx build --no-cache \
             --build-arg JOBS=$JOBS \
-            --build-arg BUILD_ARGS=$BUILD_ARGS \
-            --build-arg CFLAGS=$CFLAGS \
-            --build-arg CXXFLAGS=$CXXFLAGS \
+            --build-arg BUILD_ARGS="$BUILD_ARGS" \
+            --build-arg CFLAGS="$CFLAGS" \
+            --build-arg CXXFLAGS="$CXXFLAGS" \
             -f ./Dockerfile.linux \
             --output type=local,dest=node/out .
 
